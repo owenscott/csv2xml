@@ -6,9 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "scripts": {
+    "test":"tape test/*.js | tap-spec"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "underscore": "^1.6.0"
+  },
+  "devDependencies": {
+    "tap-spec": "^0.2.0",
+    "tape": "^2.13.3"
   }
 }
