@@ -1,6 +1,7 @@
 //TODO: the conditionals are a duplicative mess. this is primed for refactoring. but it works :)
 
-var _ = require('underscore');
+var _ = require('underscore'),
+	eliminateDuplicates = require('./eliminateDuplicates.js');
 
 var nodeType = function(node, key) {
 	
@@ -24,17 +25,20 @@ var deepExtend = function(original, extension, options) {
 
 	var defaults = {
 		arrayify: false,
-		allowDuplicates: true
+		allowDuplicates: false
 	}
 
 	var keys = _.keys(extension);
 
 	options = _.extend(defaults, options);
 
-	//short-circuit the rest of the function is the original is an array that we want to push to
+	//short-circuit the rest of the function if the original is an array that we want to push to
 	if (nodeType(original) === 'array' && options.arrayify === true) {
 		result.push(extension);
-		return(result);
+		if (options.allowDuplicates === false) {
+			result = eliminateDuplicates(result);
+		}
+		return(_.clone(result));
 	}	
 
 	_.keys(extension).forEach(function(key) {
@@ -43,7 +47,7 @@ var deepExtend = function(original, extension, options) {
 			extensionNodeType = nodeType(extension, key),
 			temp;
 
-		//target is empty or it's an array that we're going to overrride
+		//target is empty or it's an array that we're going to overwrite
 		if (originalNodeType === 'not defined' || (originalNodeType === 'array' && options.arrayify === false) ) {
 			if (extensionNodeType === 'object') {
 				result[key] = {};
@@ -66,9 +70,15 @@ var deepExtend = function(original, extension, options) {
 
 		//target is an object or literal which will be converted to an array and pushed to
 		else if ((originalNodeType === 'object' || originalNodeType === 'literal') && options.arrayify === true) {
-			temp = _.clone(result[key]);
-			result[key] = [];
-			result[key].push(temp);
+
+			result[key] = _.clone(result[key]); //indiscriminate but fixed a bug
+
+			if (!_.isArray(result[key])) {
+				temp = _.clone(result[key]);
+				result[key] = [];
+				result[key].push(temp);
+			}
+
 			if (extensionNodeType === 'object') {
 				result[key].push(extension[key])
 			}
@@ -87,6 +97,13 @@ var deepExtend = function(original, extension, options) {
 		}
 
 	})
+
+
+
+
+	if (options.allowDuplicates === false) {
+		result = eliminateDuplicates(result);
+	}
 
 	return result;
 
