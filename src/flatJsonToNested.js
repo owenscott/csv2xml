@@ -28,11 +28,9 @@ module.exports = function(data, options) {
 	var rootObject = buildObjectFromKeyArray(rootNode,[]);
 
 	var result = options.primaryKey ? {} : [];
-	var c = 0;
 
 	data.forEach(function(d) {
-		console.log('hark, a data ' + c);
-		c = c + 1;
+
 		var row = {};
 
 		//use the mapping to create an properly formatted object for reach row
