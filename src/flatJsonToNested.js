@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var getRootNode = require('./getRootNode.js');
 var deepExtend = require('./deepExtend.js');
+var eliminateDuplicates = require('./eliminateDuplicates');
 
 module.exports = function(data, options) {
 
@@ -29,11 +30,13 @@ module.exports = function(data, options) {
 
 	var result = options.primaryKey ? {} : [];
 
-	data.forEach(function(d) {
+	data.forEach(function(d, i) {
 
 		var row = {};
 
-		//use the mapping to create an properly formatted object for reach row
+		console.log('Row ' + (i+1) + ' of ' + data.length);
+
+		//use the mapping to create an properly formatted object for each row
 		_.map(simplifiedMapping, function(m, k) {
 			var tempObject;
 			if (d[k]) {
@@ -41,7 +44,6 @@ module.exports = function(data, options) {
 				row = deepExtend(row, tempObject);
 			}
 		})
-
 
 		//extend the result object by the row object
 		if (options.primaryKey && !d[options.primaryKey]) {
@@ -55,7 +57,7 @@ module.exports = function(data, options) {
 		else {
 			result.push(row);
 		}
-	})
+	})	
 
 	var tempResult = [];
 
@@ -76,6 +78,8 @@ module.exports = function(data, options) {
 	}
 
 	rootObject = assignResultToRootObject(rootObject, result);
+
+	rootObject = eliminateDuplicates(rootObject);
 
 	return rootObject;
 

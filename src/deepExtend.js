@@ -51,7 +51,7 @@ var deepExtend = function(original, extension, options) {
 		if (originalNodeType === 'not defined' || (originalNodeType === 'array' && options.arrayify === false) ) {
 			if (extensionNodeType === 'object') {
 				result[key] = {};
-				result[key] = deepExtend(result[key], extension[key], options)
+				result[key] = deepExtend(result[key], extension[key], {arrayify:options.arrayify, allowDuplicates:true})
 			}
 			else {
 				result[key] = extension[key];
@@ -61,7 +61,7 @@ var deepExtend = function(original, extension, options) {
 		//target is an object or literal which will be extended or overwritten
 		else if ((originalNodeType === 'object' || originalNodeType === 'literal') && options.arrayify === false) {
 			if (extensionNodeType === 'object') {
-				result[key] = deepExtend(result[key], extension[key], options);
+				result[key] = deepExtend(result[key], extension[key], {arrayify:options.arrayify, allowDuplicates:true});
 			}
 			else {
 				result[key] = extension[key];
@@ -99,11 +99,12 @@ var deepExtend = function(original, extension, options) {
 	})
 
 
-
-
-	if (options.allowDuplicates === false) {
-		result = eliminateDuplicates(result);
-	}
+	
+	// console.log('not allowed...');
+	// if (options.allowDuplicates === false) {
+	// 	console.log('ALLOWED');
+	// 	result = eliminateDuplicates(result);
+	// }
 
 	return result;
 

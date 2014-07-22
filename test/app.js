@@ -38,7 +38,7 @@ var tables = {
 
 var fs = require('fs');
 
-csvData.exampleTable = fs.readFileSync('./test/data/np_join_split.csv').toString();
+csvData.exampleTable = fs.readFileSync('./test/data/np_join_split_huge.csv').toString();
 
 // app(csvData, tables, function(err, res) {
 

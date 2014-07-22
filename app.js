@@ -7,13 +7,8 @@ var flatJsonToNested = require('./src/flatJsonToNested'),
 	fs = require('fs'),
 	_ = require('lodash');
 
-
-
-
 module.exports = function(csvData, tables, callback) {
 
-
-	
 	var result;
 
 	csvData = csvData || {};
@@ -41,7 +36,6 @@ module.exports = function(csvData, tables, callback) {
 
 		}
 
-
 		else {
 
 			var keys = _.chain(jsonData).pluck(tables.exampleTable.primaryKey).uniq().value();
@@ -56,20 +50,20 @@ module.exports = function(csvData, tables, callback) {
 				
 				var query = {};
 
-				console.log(i + ' of ' + keys.length);
+				console.log('==========================================================================')
+				console.log((i+1) + ' of ' + keys.length);
+				console.log(key);
+				console.log('==========================================================================')
+
 
 				query[tables.exampleTable.primaryKey] = key;
 
 				var data = _.clone(jsonData[key]),
-					partialResult = flatJsonToNested(data, tables.exampleTable);
+					partialResult = _.clone(flatJsonToNested(data, tables.exampleTable));
 
 				result.write(json2xml('foo', partialResult));
 
 			})
 		}
-
 	})
-
-
-
 }
