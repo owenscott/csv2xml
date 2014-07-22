@@ -1,5 +1,5 @@
 var app = require('./../app.js');
-require('v8-profiler');
+
 
 // var csvData = {
 // 	exampleTable: 'project id,title,sector name,sector code\r\n1,Example Project 1,Agriculture,A\r\n1,Example Project 1,Food Production,FP\r\n2,Example Project 2,Noise,N'
@@ -38,7 +38,7 @@ var tables = {
 
 var fs = require('fs');
 
-csvData.exampleTable = fs.readFileSync('./test/data/np_join_split_big.csv').toString();
+csvData.exampleTable = fs.readFileSync('./test/data/np_join_split.csv').toString();
 
 // app(csvData, tables, function(err, res) {
 
