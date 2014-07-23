@@ -81,6 +81,8 @@ module.exports = function(data, options) {
 
 	rootObject = eliminateDuplicates(rootObject);
 
+	rootObject = rootObject[rootNode[0]]
+
 	return rootObject;
 
 }

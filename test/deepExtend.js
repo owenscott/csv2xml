@@ -63,7 +63,7 @@ test('Deep extend works with two duplicate objects and arrayify=true', function(
 		extended2,
 		extended3;
 
-	t.plan(3);
+	t.plan(2);
 
 	extended1 = deepExtend(original, extend3, {arrayify:true});
 	extended2 = deepExtend(extended1, extend4, {arrayify:true})
@@ -72,6 +72,8 @@ test('Deep extend works with two duplicate objects and arrayify=true', function(
 
 	t.deepEqual(extended1, {'foo':'bar'}, 'Result of the first extension is correct');
 	t.deepEqual(extended2, {'foo':['bar','nachos']}, 'Result of the second extension is an array')
-	t.deepEqual(extended3, {'foo':['bar','nachos']}, 'Extending again by an array member results in no change');
+	
+	//took this out b/c extrictated eliminateDuplicates from deepExtend to improve performance
+	// t.deepEqual(extended3, {'foo':['bar','nachos']}, 'Extending again by an array member results in no change');
 
 });
