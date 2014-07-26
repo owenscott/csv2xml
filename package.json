@@ -1,13 +1,13 @@
 {
-  "name": "temp",
-  "version": "0.0.0",
+  "name": "csv2xml",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "tape test/*.js | tap-spec"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Owen Scott (owen.m.scott@gmail.com)",
+  "license": "MIT",
   "dependencies": {
     "async": "^0.9.0",
     "csv-parse": "0.0.5",
@@ -18,8 +18,6 @@
     "underscore": "^1.6.0"
   },
   "devDependencies": {
-    "gulp": "^3.8.6",
-    "gulp-browserify": "^0.5.0",
     "tap-spec": "^0.2.0",
     "tape": "^2.13.3"
   }
