@@ -32,7 +32,7 @@ var tables = {
 
 var test = new Csv2Xml(tables.exampleTable);
 
-var inFile = fs.createReadStream('./test/data/np_join_split.csv');
+var inFile = fs.createReadStream('./test/data/np_join_split_noduplicates.csv');
 var outFile = fs.createWriteStream('./result.xml');
 
 inFile.pipe(test).pipe(outFile);

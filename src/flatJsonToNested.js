@@ -34,7 +34,7 @@ module.exports = function(data, options) {
 
 		var row = {};
 
-		// console.log('Row ' + (i+1) + ' of ' + data.length);
+		console.log('Row ' + (i+1) + ' of ' + data.length);
 
 		//use the mapping to create an properly formatted object for each row
 		_.map(simplifiedMapping, function(m, k) {
