@@ -12,16 +12,7 @@ var eliminateDuplicates = function(obj) {
 		obj.forEach(function(item, i) {
 			obj[i] = eliminateDuplicates(item);
 		});
-		//hash the resulting array item by item and check for duplicates
-		// hashArray = [];
-		// tempArray = [];
-		// obj.forEach(function(item){
-		// 	if (!_.contains(hashArray, JSON.stringify(item))) {
-		// 		hashArray.push(JSON.stringify(item))
-		// 		tempArray.push(item);
-		// 	}
-		// })
-		// //if the resulting array has only one item then drop the array and just return the item
+
 		tempArray = _.uniq(obj, function(o) {
 			return JSON.stringify(o);
 		})

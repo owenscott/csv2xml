@@ -26,7 +26,7 @@ var extend4 = 	{'foo':'nachos'}
 
 
 
-test('Deep extend works with two basic objects and arrayify=false', function(t) {
+test('deepExtend: Deep extend works with two basic objects and arrayify=false', function(t) {
 	
 	var extended1,
 		extened2;
@@ -41,7 +41,7 @@ test('Deep extend works with two basic objects and arrayify=false', function(t) 
 
 });
 
-test('Deep extend works with two basic objects and arrayify=true', function(t) {
+test('deepExtend: Deep extend works with two basic objects and arrayify=true', function(t) {
 	
 	var extended1,
 		extened2;

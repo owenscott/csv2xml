@@ -16,7 +16,7 @@ var mapping2 = {
 	'sector code': ['iati-activities', 'iati-activity', 'sector', '@', 'code']
 }
 
-test('Get root node should return the deepest common node for a set of mappings', function(t) {
+test('getRootNode: Get root node should return the deepest common node for a set of mappings', function(t) {
 	t.plan(2);
 	t.deepEqual(getRootNode(mapping), ['iati-activity'], 'Mapping should be [\'iati-activity\'] for a shallow set of mappings.');
 	//failing test:

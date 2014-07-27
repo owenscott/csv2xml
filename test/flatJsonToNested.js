@@ -38,7 +38,7 @@ var data = [
 
 var expectedResult = {"iati-activity":[{"other-identifier":{"#":"1"},"title":{"#":"Example Project 1"},"sector":[{"#":"Agriculture","@":{"code":"A"}},{"#":"Food Production","@":{"code":"FP"}}]},{"other-identifier":{"#":"2"},"title":{"#":"Example Project 2"},"sector":{"#":"Noise Pollution","@":{"code":"NP"}}}]};
 
-test('Mapping of flat csv-like JSON object to nested object returns expected result for a given mapping and pkey', function(t) {
+test('flatJsonToNested: Mapping of flat csv-like JSON object to nested object returns expected result for a given mapping and pkey', function(t) {
 	t.plan(1);
 	t.deepEqual(flatJsonToNested(data, options), expectedResult);
 })

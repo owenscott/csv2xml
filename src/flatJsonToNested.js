@@ -9,11 +9,11 @@ module.exports = function(data, options) {
 
 	var rootNode = getRootNode(options.mapping);
 
-	var simplifiedMapping = {}
+	var simplifiedMapping = options.mapping;
 
-	_.map(options.mapping, function(m, k) {
-		simplifiedMapping[k] = m.slice(rootNode.length, m.length);
-	})
+	// _.map(options.mapping, function(m, k) {
+	// 	simplifiedMapping[k] = m.slice(rootNode.length, m.length);
+	// })
 
 	var buildObjectFromKeyArray = function (keyArray, value) {
 		var obj = {};
@@ -34,7 +34,7 @@ module.exports = function(data, options) {
 
 		var row = {};
 
-		console.log('Row ' + (i+1) + ' of ' + data.length);
+		// console.log('Row ' + (i+1) + ' of ' + data.length);
 
 		//use the mapping to create an properly formatted object for each row
 		_.map(simplifiedMapping, function(m, k) {

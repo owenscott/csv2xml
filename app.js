@@ -16,17 +16,19 @@ var fs = require('fs'),
 	through = require('through'),
 	_ = require('lodash'),
 	multipipe = require('multipipe'),
-	getRootNode = require('./src/getRootNode');
+	getRootNode = require('./src/getRootNode'),
+	stripMapping = require('./src/stripMapping');
 
 
 module.exports = function Csv2Xml(conf) {
 
 	var self = this,
-		parser = csvParse({columns:true}),
+		parser = csvParse({columns:true, declaration:{includ:false}}),
 		group,
 		mapFields,
 		toXML,
-		defaults;
+		defaults,
+		rootNode;
 	
 	defaults = {
 		sorted: false,
@@ -46,6 +48,10 @@ module.exports = function Csv2Xml(conf) {
 		throw new Error('Sorry. Right now csv2xml only supports CSVs which are sorted by primary key. Pass in an explicit "sorted:true" with your configuration.');
 	}
 
+	rootNode = getRootNode(conf.mapping);
+
+	conf.mapping = stripMapping(conf.mapping, rootNode);
+
 	//takes the raw CSV stream and groups it into batches by primary key nad writes to 'mapFields'
 	group = through( function write(data) { 
 
@@ -60,8 +66,8 @@ module.exports = function Csv2Xml(conf) {
 			else {
 				this.history.push(this.currentRecord);
 			}
-			console.log('Starting ' + this.currentRecord);
-			console.log('==================================')
+			// console.log('Starting ' + this.currentRecord);
+			// console.log('==================================')
 			this.queue(_.clone(this.backlog));
 			this.backlog = [];
 		}
@@ -79,7 +85,7 @@ module.exports = function Csv2Xml(conf) {
 
 	//converts json to XML and writes to the parent function's queue (to be piped to wherever by the user)
 	toXML = through( function write (data) {
-		this.queue(json2xml('iati-activity', data))
+		this.queue(json2xml(rootNode[0], data, {columns:true, declaration:{includ:false}}))
 		this.queue('\n');	
 	});
 
