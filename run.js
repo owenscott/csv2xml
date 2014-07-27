@@ -1,10 +1,10 @@
 var fs = require('fs'),
 	Csv2Xml = require('./app.js');
 
-
 var tables = {
 	exampleTable: {
 		primaryKey:'project_ID',
+		sorted: true,
 		mapping: {
 			'project_ID': ['iati-activity','iati-identifier','#'],
 			'transaction_values': ['iati-activity','transaction','value','#'],
@@ -24,15 +24,13 @@ var tables = {
 			'donors': ['iati-activity','participating-org','#'],
 			'iati_donor_codes': ['iati-activity','participating-org','@','ref'],
 			'status': ['iati-activity','activity-status','#']
-
 		}
 	}
 }
 
-
 var test = new Csv2Xml(tables.exampleTable);
 
-var inFile = fs.createReadStream('./test/data/np_join_split_noduplicates.csv');
+var inFile = fs.createReadStream('./test/data/np_join_split.csv');
 var outFile = fs.createWriteStream('./result.xml');
 
 inFile.pipe(test).pipe(outFile);

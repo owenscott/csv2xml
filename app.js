@@ -15,7 +15,8 @@ var fs = require('fs'),
 	json2xml = require('js2xmlparser'),
 	through = require('through'),
 	_ = require('lodash'),
-	multipipe = require('multipipe');
+	multipipe = require('multipipe'),
+	getRootNode = require('./src/getRootNode');
 
 
 module.exports = function Csv2Xml(conf) {
@@ -24,29 +25,43 @@ module.exports = function Csv2Xml(conf) {
 		parser = csvParse({columns:true}),
 		group,
 		mapFields,
-		toXML;
-		// split = split();
+		toXML,
+		defaults;
+	
+	defaults = {
+		sorted: false,
+		mapping: [],
+		primaryKey: ''
+	}
 
-	//converts json to XML and writes to the parent function's queue (to be piped to wherever by the user)
-	toXML = through( function write (data) {
-		this.queue(json2xml('iati-activity', data))
-		this.queue('\n');	
-	});
+	conf = _.extend(defaults, conf);
 
-	//takes flat JSON and converts to nested JSON according to the user-supplied configuration and writes to 'toXML'
-	mapFields = through( function write (data) {
-		this.queue(flatJsonToNested(data, conf))
-	})
+	//argument checking
+
+	if (!conf.primaryKey) {
+		throw new Error('Sorry. Right now csv2xml only supports CSVs with explicit primary keys. Add a "primaryKey" key-value pair to your configuration object.')
+	}
+
+	if (!conf.sorted) {
+		throw new Error('Sorry. Right now csv2xml only supports CSVs which are sorted by primary key. Pass in an explicit "sorted:true" with your configuration.');
+	}
 
 	//takes the raw CSV stream and groups it into batches by primary key nad writes to 'mapFields'
 	group = through( function write(data) { 
 
 		this.backlog = this.backlog || [];
+		this.history = this.history || [];
 
 		if (data[conf.primaryKey] !== this.currentRecord && this.backlog.length) {
 			this.currentRecord = data[conf.primaryKey];
-			// console.log('Starting ' + this.currentRecord);
-			// console.log('==================================')
+			if (this.history.indexOf(this.currentRecord) > -1) {
+				throw new Error('Your CSV is supposed to be sorted but you have used this primary key already. ' + this.currentRecord)
+			}
+			else {
+				this.history.push(this.currentRecord);
+			}
+			console.log('Starting ' + this.currentRecord);
+			console.log('==================================')
 			this.queue(_.clone(this.backlog));
 			this.backlog = [];
 		}
@@ -56,8 +71,19 @@ module.exports = function Csv2Xml(conf) {
 
 	});
 
-	//parses the CSV text into flat json objects (one per row) and then writes to 'group'
+	//takes flat JSON and converts to nested JSON according to the user-supplied configuration and writes to 'toXML'
+	mapFields = through( function write (data) {
+		this.queue(flatJsonToNested(data, conf))
+	})
 
+
+	//converts json to XML and writes to the parent function's queue (to be piped to wherever by the user)
+	toXML = through( function write (data) {
+		this.queue(json2xml('iati-activity', data))
+		this.queue('\n');	
+	});
+
+	// combine above meothods and return as transform stream
 	return multipipe(parser, group, mapFields, toXML);
 
 }
