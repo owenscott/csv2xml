@@ -8,6 +8,7 @@ var eliminateDuplicates = function(obj) {
 		tempArray;
 
 	if (_.isArray(obj)) {
+
 		//iterate through array and remove duplicates from each item
 		obj.forEach(function(item, i) {
 			obj[i] = eliminateDuplicates(item);

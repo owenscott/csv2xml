@@ -4,6 +4,7 @@ var _ = require('underscore');
 var getRootNode = require('./getRootNode.js');
 var deepExtend = require('./deepExtend.js');
 var eliminateDuplicates = require('./eliminateDuplicates');
+var buildObjectFromKeyArray = require('./buildObjectFromKeyArray');
 
 module.exports = function(data, options) {
 
@@ -14,17 +15,6 @@ module.exports = function(data, options) {
 	// _.map(options.mapping, function(m, k) {
 	// 	simplifiedMapping[k] = m.slice(rootNode.length, m.length);
 	// })
-
-	var buildObjectFromKeyArray = function (keyArray, value) {
-		var obj = {};
-		if (keyArray.length > 1) {
-			obj[keyArray[0]] = buildObjectFromKeyArray(keyArray.slice(1,keyArray.length), value);
-		}
-		else {
-			obj[keyArray[0]] = value;
-		}
-		return _.clone(obj);
-	}
 
 	var rootObject = buildObjectFromKeyArray(rootNode,[]);
 
