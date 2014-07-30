@@ -60,7 +60,6 @@ module.exports = function Csv2Xml(conf) {
 
 	rootNode = getRootNode(conf.mapping);
 
-	// rootObject = buildObjectFromKeyArray(rootNode,'');
 
 	conf.mapping = stripMapping(conf.mapping, rootNode);
 
@@ -68,7 +67,8 @@ module.exports = function Csv2Xml(conf) {
 	toXML = new json2xml({
 		attKey: '@',
 		textKey: '#',
-		rootObject:buildObjectFromKeyArray(rootNode.slice(1, rootNode.length), '')
+		rootObject:buildObjectFromKeyArray(rootNode, '')
+		// rootObject:buildObjectFromKeyArray(rootNode.slice(1, rootNode.length), '')
 	})
 
 
@@ -76,9 +76,10 @@ module.exports = function Csv2Xml(conf) {
 	group = through( function write(data) { 
 		this.backlog = this.backlog || [];
 		this.history = this.history || [];
+		this.currentRecord = this.currentRecord || data[conf.primaryKey];
 
 		if (data[conf.primaryKey] !== this.currentRecord && this.backlog.length) {
-			this.currentRecord = data[conf.primaryKey];
+			this.currentRecord = data[conf.primaryKey];			
 			if (this.history.indexOf(this.currentRecord) > -1) {
 				throw new Error('Your CSV is supposed to be sorted but you have used this primary key already. ' + this.currentRecord)
 			}
@@ -94,29 +95,17 @@ module.exports = function Csv2Xml(conf) {
 			this.backlog.push(data);
 		}
 
+	}, function end() {
+		this.queue(_.clone(this.backlog));
+		this.queue(null);
 	});
 
 	//takes flat JSON and converts to nested JSON according to the user-supplied configuration and writes to 'toXML'
 	mapFields = through( function write (data) {
-		console.log(data);
 		this.queue(flatJsonToNested(data, conf))
 	})
 
-	//converts json to XML and writes to the parent function's queue (to be piped to wherever by the user)
-	// toXML = through( function write (data) {
-
-	// 	var temp = {};
-	// 	//TODO: this shoudl work but first I need a streaming JSON2XML parser that works better
-	// 	// temp[_.last(rootNode)] = _.clone(data);
-
-	// 	this.queue(json2xml(rootNode[0], temp, {columns:true, declaration:{includ:false}}))
-	// 	this.queue('\n');		
-
-	// });
-
 	// combine above meothods and return as transform stream
-	return multipipe(parser, group, mapFields)//, toXML);
-//TODO: some kind of error happening without toXML on the end
-
+	return multipipe(parser, group, mapFields, toXML);
 
 }

@@ -6,83 +6,93 @@ var through = require('through'),
 
 
 
-module.exports = function (options) {
+var toXML = function(jsonData, nodeName, type, options) {
 
-	return through (function write (data) {
-		
-		var queue = this.queue,
-			rootObject = options.rootObject;
+	var context = this;
 
-		console.log(data);
+	var attributes = jsonData[options.attKey],
+		text = jsonData[options.textKey],
+		shortClose = true,
+		children,
+		rootNodeName;
 
-		var toXML = function(jsonData, nodeName, type) {
+	if (_.isArray(jsonData)) {
+		shortClose = false;
+		jsonData.forEach(function(d) {
+			toXML.apply(context, [d, nodeName, type, options]);
+		})
+	}
+
+	else {
+
+		children = _.chain(jsonData).keys().without(options.attKey, options.textKey).value();
+
+
+		if (type === 'opening' || type === 'child') {	
 			
-			var attributes = jsonData[options.attKey],
-				text = jsonData[options.textKey],
-				children = _.chain(jsonData).keys().without(options.attKey, options.textKey).value(),
-				shortClose = true,
-				rootNodeName;
+			context.queue ('<' + nodeName);
 
-			if (type === 'opening' || type === 'child') {	
-				
-				queue ('<' + nodeName);
+			if (attributes) {
 
-				if (attributes) {
-					_.keys(attributes).forEach(function(a) {
-						if ( typeof attributes[a] !== 'string' ) {
-							throw new Error ('Attributes must be a string.');
-						}
-						queue[' ' + a + '="' + attributes[a] + '"']
-					})
-				}
-				
-				if (text || children.length) {
-
-					queue('>');
-					shortClose = false;
-
-					if (text) {
-						if ( typeof text !== 'string' ) {
-							throw new Error ('Text must be a string.');
-						}
-						queue(text);
+				_.keys(attributes).forEach(function(a) {
+					if ( typeof attributes[a] !== 'string' ) {
+						throw new Error ('Attributes must be a string.');
 					}
+					context.queue(' ' + a + '="' + attributes[a] + '"');
+				})
+			}
+			
+			if (text || children.length || type === 'opening') {
 
-					children.forEach (function(key) {
-						if (_.isArray(jsonData[key])) {
-							jsonData[key].forEach(function (d) {
-								toXML(d, key, type);
-							})
-						}
-						else {
-							toXML(jsonData[key], key, type);
-						}
-					})
+				context.queue('>');
+				shortClose = false;
 
+				if (text) {
+					if ( typeof text !== 'string' ) {
+						throw new Error ('Text must be a string.');
+					}
+					context.queue(text);
 				}
 
-			}
+				children.forEach (function(key) {
+					toXML.apply(context, [jsonData[key], key, type, options]);
+				})
 
-			if (type === 'child' && shortClose === true ) {
-				queue('/>')
-			}
-			else if (type === 'child' || type === 'closing' ) {
-				queue('</' + nodeName + '>')
 			}
 
 		}
 
+		if (type === 'child' && shortClose === true ) {
+			context.queue('/>')
+		}
+		else if (type === 'child' || type === 'closing' ) {
+			context.queue('</' + nodeName + '>')
+		}
+
+	}
+
+
+}
+
+module.exports = function (options) {
+
+	return through (function write (data) {
+		
+		var rootObject = options.rootObject,
+			context = this;
+		
+
 		if (!this.started && rootObject) {
+
 			if (_.chain(rootObject).keys().omit(options.attKey).value().length > 1) {
 				throw new Error('Cannot have a root object wiht more than one non-attribute key at first level');
 			}
 			rootNodeName = _.chain(rootObject).keys().omit(options.attKey).first().value()
-			console.log(rootNodeName);
 			if (_.isObject(rootObject[rootNodeName])) {
-				toXML(rootObject[rootNodeName], rootNodeName, 'opening');
+				toXML.apply(context, [rootObject[rootNodeName], rootNodeName, 'opening', options]);
 			}
 			else {
-				queue('<' + rootNodeName + '>');
+				this.queue('<' + rootNodeName + '>');
 			}
 			this.started = true;
 		}
@@ -92,25 +102,25 @@ module.exports = function (options) {
 		}
 
 		_.keys(data).forEach(function(key) {
-			toXML(data[key], key, 'child')
+			toXML.apply(context, [data[key], key, 'child', options])
 		});
 	
-	});
+	},
 
-	// },
+	function end () {
 
-	// function end () {
+		var rootNodeName;
 
-	// 	// var rootNodeName;
+		console.log(options);
 
-	// 	// if (options.rootObject) {
-	// 	// 	rootNodeName = _.chain(rootObject).keys().omit(options.attKey).first().value()
-	// 	// 	toXML(options.rootObject[rootNodeName], rootNodeName, 'closing');
-	// 	// }
+		if (options.rootObject) {
+			rootNodeName = _.chain(options.rootObject).keys().omit(options.attKey).first().value()
+			toXML.apply(this, [options.rootObject[rootNodeName], rootNodeName, 'closing', options]);
+		}
 
-	// 	this.queue(null);
+		this.queue(null);
 
-	// })
+	})
 	
 }
 
