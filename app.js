@@ -20,7 +20,8 @@ var fs = require('fs'),
 	stripMapping = require('./src/stripMapping'),
 	buildObjectFromKeyArray = require('./src/buildObjectFromKeyArray'),
 	deepExtend = require('./src/deepExtend'),
-	json2xml = require('./src/json2xml');
+	json2xml = require('./src/json2xml'),
+	parseXPath = require('./src/parseXPath');
 
 
 module.exports = function Csv2Xml(conf) {
@@ -41,6 +42,10 @@ module.exports = function Csv2Xml(conf) {
 	}
 
 	conf = _.extend(defaults, conf);
+
+	_.keys(conf.mapping).forEach(function(key) {
+		conf.mapping[key] = parseXPath(conf.mapping[key]);
+	});
 
 	// ---------------------
 	// | argument checking |
