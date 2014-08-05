@@ -62,12 +62,12 @@ module.exports = function Csv2Xml(conf) {
 
 
 	conf.mapping = stripMapping(conf.mapping, rootNode);
-
+	conf.rootElementName = _.last(rootNode);
 
 	toXML = new json2xml({
 		attKey: '@',
 		textKey: '#',
-		rootObject:buildObjectFromKeyArray(rootNode, '')
+		rootObject:buildObjectFromKeyArray(_.first(rootNode, rootNode.length - 1), '')
 		// rootObject:buildObjectFromKeyArray(rootNode.slice(1, rootNode.length), '')
 	})
 
@@ -86,8 +86,6 @@ module.exports = function Csv2Xml(conf) {
 			else {
 				this.history.push(this.currentRecord);
 			}
-			console.log('Starting ' + this.currentRecord);
-			console.log('==================================')
 			this.queue(_.clone(this.backlog));
 			this.backlog = [];
 		}
@@ -99,6 +97,9 @@ module.exports = function Csv2Xml(conf) {
 		this.queue(_.clone(this.backlog));
 		this.queue(null);
 	});
+
+//need to call flatJsonToNested with the last of the root objects
+//build toXML with the rest of them
 
 	//takes flat JSON and converts to nested JSON according to the user-supplied configuration and writes to 'toXML'
 	mapFields = through( function write (data) {

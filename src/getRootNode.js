@@ -24,6 +24,11 @@ module.exports = function(mapping, result) {
 
 	iterate(0);
 
+	//use <xml> as the default case if for some reason there is no common root node
+	if (!result.length) {
+		result = ['xml'];
+	}
+
 	return result;
 
 }

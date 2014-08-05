@@ -2,10 +2,10 @@ var test = require('tape'),
 	flatJsonToNested = require('./../src/flatJsonToNested.js');
 
 var mapping = {
-	'project id': ['iati-activity','other-identifier','#'],
-	'title': ['iati-activity','title','#'],
-	'sector name': ['iati-activity','sector','#'],
-	'sector code': ['iati-activity','sector','@','code']
+	'project id': ['other-identifier','#'],
+	'title': ['title','#'],
+	'sector name': ['sector','#'],
+	'sector code': ['sector','@','code']
 }
 
 var primaryKey = 'project id';
@@ -14,6 +14,7 @@ var options = {};
 
 options.primaryKey = primaryKey;
 options.mapping = mapping;
+options.rootElementName = 'iati-activity';
 
 var data = [
 	{

@@ -70,8 +70,6 @@ var toXML = function(jsonData, nodeName, type, options) {
 		}
 
 	}
-
-
 }
 
 module.exports = function (options) {
@@ -110,8 +108,6 @@ module.exports = function (options) {
 	function end () {
 
 		var rootNodeName;
-
-		console.log(options);
 
 		if (options.rootObject) {
 			rootNodeName = _.chain(options.rootObject).keys().omit(options.attKey).first().value()

@@ -1,5 +1,3 @@
-
-
 var _ = require('underscore');
 var getRootNode = require('./getRootNode.js');
 var deepExtend = require('./deepExtend.js');
@@ -8,23 +6,15 @@ var buildObjectFromKeyArray = require('./buildObjectFromKeyArray');
 
 module.exports = function(data, options) {
 
-	var rootNode = getRootNode(options.mapping);
-
 	var simplifiedMapping = options.mapping;
 
-	// _.map(options.mapping, function(m, k) {
-	// 	simplifiedMapping[k] = m.slice(rootNode.length, m.length);
-	// })
-
-	var rootObject = buildObjectFromKeyArray(rootNode,[]);
+	var rootObject = buildObjectFromKeyArray([options.rootElementName],[]);
 
 	var result = options.primaryKey ? {} : [];
 
 	data.forEach(function(d, i) {
 
 		var row = {};
-
-		// console.log('Row ' + (i+1) + ' of ' + data.length);
 
 		//use the mapping to create an properly formatted object for each row
 		_.map(simplifiedMapping, function(m, k) {
@@ -42,7 +32,6 @@ module.exports = function(data, options) {
 		else if (options.primaryKey) {
 			result[d[options.primaryKey]] = result[d[options.primaryKey]] || {};
 			result[d[options.primaryKey]] = deepExtend(result[d[options.primaryKey]], row, {arrayify: true, allowDuplicates: false})
-			// console.log(result[d[options.primaryKey]])			
 		}
 		else {
 			result.push(row);
@@ -54,7 +43,6 @@ module.exports = function(data, options) {
 	if (_.isObject(result) && !_.isArray(result)) {
 		result = _.map(result, function(r) {return r;});
 	}
-
 
 	var assignResultToRootObject = function(rootObject, result) {
 		var key = _.keys(rootObject)[0]
@@ -70,8 +58,6 @@ module.exports = function(data, options) {
 	rootObject = assignResultToRootObject(rootObject, result);
 
 	rootObject = eliminateDuplicates(rootObject);
-
-	rootObject = rootObject[rootNode[0]]
 
 	return rootObject;
 
