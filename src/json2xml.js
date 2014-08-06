@@ -79,19 +79,12 @@ module.exports = function (options) {
 		var rootObject = options.rootObject,
 			context = this;
 		
-
 		if (!this.started && rootObject) {
 
-			if (_.chain(rootObject).keys().omit(options.attKey).value().length > 1) {
-				throw new Error('Cannot have a root object wiht more than one non-attribute key at first level');
-			}
-			rootNodeName = _.chain(rootObject).keys().omit(options.attKey).first().value()
-			if (_.isObject(rootObject[rootNodeName])) {
-				toXML.apply(context, [rootObject[rootNodeName], rootNodeName, 'opening', options]);
-			}
-			else {
-				this.queue('<' + rootNodeName + '>');
-			}
+			rootObject.forEach(function(node) {
+				context.queue('<' + node + '>')
+			});
+
 			this.started = true;
 		}
 
@@ -107,12 +100,11 @@ module.exports = function (options) {
 
 	function end () {
 
-		var rootNodeName;
+		var context = this;
 
-		if (options.rootObject) {
-			rootNodeName = _.chain(options.rootObject).keys().omit(options.attKey).first().value()
-			toXML.apply(this, [options.rootObject[rootNodeName], rootNodeName, 'closing', options]);
-		}
+		_.chain(options.rootObject).reverse().each(function(node) {
+			context.queue('</' + node + '>')
+		});		
 
 		this.queue(null);
 

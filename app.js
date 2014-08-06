@@ -43,13 +43,14 @@ module.exports = function Csv2Xml(conf) {
 
 	conf = _.extend(defaults, conf);
 
+
+	// ------------------------------------
+	// | argument checking and processing |
+	// ------------------------------------
+
 	_.keys(conf.mapping).forEach(function(key) {
 		conf.mapping[key] = parseXPath(conf.mapping[key]);
 	});
-
-	// ---------------------
-	// | argument checking |
-	// ---------------------
 
 	if (!conf.primaryKey) {
 		throw new Error('Sorry. Right now csv2xml only supports CSVs with explicit primary keys. Add a "primaryKey" key-value pair to your configuration object.')
@@ -59,59 +60,66 @@ module.exports = function Csv2Xml(conf) {
 		throw new Error('Sorry. Right now csv2xml only supports CSVs which are sorted by primary key. Pass in an explicit "sorted:true" with your configuration.');
 	}
 
+	rootNode = getRootNode(conf.mapping);
+
+	conf.mapping = stripMapping(conf.mapping, rootNode);
+	conf.rootElementName = _.last(rootNode);
+	rootNode = _.first(rootNode, rootNode.length - 1);
+
 	// ---------------------
 	// |       code        |
 	// ---------------------
 
-	rootNode = getRootNode(conf.mapping);
+	//methods
+	//=======
 
+	//groups the CSV stream into batches by primary key
+	group = through( 
 
-	conf.mapping = stripMapping(conf.mapping, rootNode);
-	conf.rootElementName = _.last(rootNode);
+		function write(data) { 
+			this.backlog = this.backlog || [];
+			this.history = this.history || [];
+			this.currentRecord = this.currentRecord || data[conf.primaryKey];
 
-	toXML = new json2xml({
-		attKey: '@',
-		textKey: '#',
-		rootObject:buildObjectFromKeyArray(_.first(rootNode, rootNode.length - 1), '')
-		// rootObject:buildObjectFromKeyArray(rootNode.slice(1, rootNode.length), '')
-	})
-
-
-	//takes the raw CSV stream and groups it into batches by primary key nad writes to 'mapFields'
-	group = through( function write(data) { 
-		this.backlog = this.backlog || [];
-		this.history = this.history || [];
-		this.currentRecord = this.currentRecord || data[conf.primaryKey];
-
-		if (data[conf.primaryKey] !== this.currentRecord && this.backlog.length) {
-			this.currentRecord = data[conf.primaryKey];			
-			if (this.history.indexOf(this.currentRecord) > -1) {
-				throw new Error('Your CSV is supposed to be sorted but you have used this primary key already. ' + this.currentRecord)
+			if (data[conf.primaryKey] !== this.currentRecord && this.backlog.length) {
+				this.currentRecord = data[conf.primaryKey];			
+				if (this.history.indexOf(this.currentRecord) > -1) {
+					throw new Error('Your CSV is supposed to be sorted but you have used this primary key already. ' + this.currentRecord)
+				}
+				else {
+					this.history.push(this.currentRecord);
+				}
+				this.queue(_.clone(this.backlog));
+				this.backlog = [];
 			}
 			else {
-				this.history.push(this.currentRecord);
+				this.backlog.push(data);
 			}
+		}, 
+
+		function end() {
 			this.queue(_.clone(this.backlog));
-			this.backlog = [];
-		}
-		else {
-			this.backlog.push(data);
+			this.queue(null);
 		}
 
-	}, function end() {
-		this.queue(_.clone(this.backlog));
-		this.queue(null);
-	});
+	);
 
-//need to call flatJsonToNested with the last of the root objects
-//build toXML with the rest of them
-
-	//takes flat JSON and converts to nested JSON according to the user-supplied configuration and writes to 'toXML'
+	//maps the flat CSV-parsed JSON objects to the nested structure indicated by the user-supplied mapping
 	mapFields = through( function write (data) {
 		this.queue(flatJsonToNested(data, conf))
 	})
 
-	// combine above meothods and return as transform stream
+	//converts final json to XML
+	toXML = new json2xml({
+		attKey: '@',
+		textKey: '#',
+		rootObject:rootNode
+	})
+
+	//execution
+	//=========
+
+	// combine above methods and return as transform stream
 	return multipipe(parser, group, mapFields, toXML);
 
 }
