@@ -21,7 +21,7 @@
     "files": "test/*.js",
     "browsers": [
       "ie/8..latest",
-      "chrome/22..latest",
+      "chrome/20..latest",
       "firefox/16..latest",
       "safari/latest",
       "opera/11.0..latest",
