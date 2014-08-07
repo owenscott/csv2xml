@@ -6,7 +6,10 @@
   "scripts": {
     "test": "tape test/*.js | tap-spec"
   },
-  "author": "Owen Scott (owen.m.scott@gmail.com)",
+  "author": {
+    "name":"Owen Scott",
+    "email": "owen.m.scott@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
     "async": "^0.9.0",
