@@ -17,6 +17,19 @@
     "through": "~2.3.4",
     "underscore": "^1.6.0"
   },
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/8..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  },
   "devDependencies": {
     "tap-spec": "^0.2.0",
     "tape": "^2.13.3"
