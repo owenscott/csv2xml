@@ -3,6 +3,9 @@ CSV2XML
 
 A JavaScript utility for converting CSV data to arbitrarily structured XML.
 
+[![browser support](https://ci.testling.com/owenscott/csv2xml.png)
+](https://ci.testling.com/owenscott/csv2xml)
+
 How to Use
 ----------
 

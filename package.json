@@ -1,7 +1,7 @@
 {
   "name": "csv2xml",
   "version": "0.0.2",
-  "description": "",
+  "description": "A simple JavaScript utility for converting CSVs to XML",
   "main": "app.js",
   "scripts": {
     "test": "tape test/*.js | tap-spec"
@@ -16,6 +16,14 @@
     "multipipe": "^0.1.1",
     "through": "~2.3.4",
     "underscore": "^1.6.0"
+  },
+  "repository": { 
+    "type": "git",
+    "url": "http://github.com/owenscott/csv2xml.git"
+  },
+  "bugs": { 
+    "url" : "http://github.com/owner/project/issues",
+    "email" : "project@hostname.com"
   },
   "testling": {
     "files": "test/*.js",
