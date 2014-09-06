@@ -64,7 +64,7 @@ test('json2xml: Sanitizes the "&" character', function(t) {
 
 	var testObj = {
 		"title":{
-			"#": "night & day"
+			"#": "night & day & fun"
 		},
 		"author":{
 			"#": "someone famous"
@@ -97,7 +97,7 @@ test('json2xml: Sanitizes the "&" character', function(t) {
 
 	//actual test here
 	toXML.on('end', function() {
-		t.equal(result, '<foo><title>night &amp; day</title><author>someone famous</author></foo>', 'Simple JSON object with the "&" character is converted to XML')
+		t.equal(result, '<foo><title>night &amp; day &amp; fun</title><author>someone famous</author></foo>', 'Simple JSON object with the "&" character is converted to XML')
 	})
 
 	jsonStream.pipe(transform).pipe(toXML);

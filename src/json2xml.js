@@ -53,7 +53,7 @@ var toXML = function(jsonData, nodeName, type, options) {
 					if ( typeof text !== 'string' ) {
 						throw new Error ('Text must be a string.');
 					}
-					text = text.replace(/&/, '&amp;')
+					text = text.replace(/&/g, '&amp;')
 					context.queue(text);
 				}
 
