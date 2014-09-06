@@ -8,6 +8,8 @@ var through = require('through'),
 
 var toXML = function(jsonData, nodeName, type, options) {
 
+	// console.log(jsonData);
+
 	var context = this;
 
 	var attributes = jsonData[options.attKey],
@@ -51,6 +53,7 @@ var toXML = function(jsonData, nodeName, type, options) {
 					if ( typeof text !== 'string' ) {
 						throw new Error ('Text must be a string.');
 					}
+					text = text.replace(/&/, '&amp;')
 					context.queue(text);
 				}
 

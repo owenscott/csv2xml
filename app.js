@@ -5,6 +5,8 @@
 
 //everything is still streaming unless there is a primaryKey but no 
 
+//TODO: add more unit tests for JSON-XML conversion
+
 
 //takes csv data as an array of strings and mapping as an object
 
