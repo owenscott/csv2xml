@@ -7,7 +7,7 @@
     "test": "tape test/*.js | tap-spec"
   },
   "author": {
-    "name":"Owen Scott",
+    "name": "Owen Scott",
     "email": "owen.m.scott@gmail.com"
   },
   "license": "MIT",
@@ -20,29 +20,31 @@
     "through": "~2.3.4",
     "underscore": "^1.6.0"
   },
-  "repository": { 
+  "repository": {
     "type": "git",
     "url": "http://github.com/owenscott/csv2xml.git"
   },
-  "bugs": { 
-    "url" : "http://github.com/owner/project/issues",
-    "email" : "project@hostname.com"
+  "bugs": {
+    "url": "http://github.com/owner/project/issues",
+    "email": "project@hostname.com"
+  },
+  "devDependencies": {
+    "tap-spec": "^0.2.0",
+    "tape": "^2.13.3"
   },
   "testling": {
     "files": "test/*.js",
     "browsers": [
       "ie/8..latest",
-      "chrome/20..latest",
-      "firefox/16..latest",
-      "safari/latest",
-      "opera/11.0..latest",
-      "iphone/6",
-      "ipad/6",
-      "android-browser/latest"
+      "firefox/17..latest",
+      "firefox/nightly",
+      "chrome/22..latest",
+      "chrome/canary",
+      "opera/12..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest"
     ]
-  },
-  "devDependencies": {
-    "tap-spec": "^0.2.0",
-    "tape": "^2.13.3"
   }
 }
