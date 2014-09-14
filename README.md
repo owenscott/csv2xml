@@ -5,6 +5,8 @@ A JavaScript utility for converting CSV data to arbitrarily structured XML.
 
 [![build status](https://secure.travis-ci.org/owenscott/csv2xml.png)](http://travis-ci.org/owenscott/csv2xml)
 
+Compatible with Node 0.10+
+
 How to Use
 ----------
 
